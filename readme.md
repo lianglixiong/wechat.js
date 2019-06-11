@@ -203,6 +203,23 @@ wechat('timeline', data, callback);
 
 })();
 ```
+调用：
+```
+if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+    // 微信分享
+    new wxShare({
+        getWxConfigUrl: "../advice/getWxConfig",
+        title: '【八百方】送你68元红包，助攻你的618',
+        desc: '会员神券日，来抢61.8元无门槛！',
+        wxUrl: thisUrl,
+        link: thisUrl,
+        imgUrl: "http://www.800pharm.com/shop/js/sales/activity618/images/20190606154315.png",
+        success:function(){
+            alert('分享成功')
+        }
+    });
+}
+```
 
 ### 2、授权
 
