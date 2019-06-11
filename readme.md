@@ -102,6 +102,8 @@ var callback = function() {
 wechat('timeline', data, callback);
 ```
 
+**四、封装**
+
 ### 2、授权
 
 [MIT License](license.txt)
