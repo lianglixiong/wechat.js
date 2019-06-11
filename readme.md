@@ -104,6 +104,106 @@ wechat('timeline', data, callback);
 
 **四、封装**
 
+```
+(function(){
+    var wxShare = function(opts){
+        var defaults = {
+            getWxConfigUrl: '',         // 获取微信接口权限url
+            orDebug: false,             // 是否开启调试模式
+            title: '',                  // 分享标题
+            desc: '',                   // 分享描述
+            wxUrl: '',                  // 参与签名的url
+            link: '',                   // 分享链接
+            imgUrl: '',                 // 分享图标
+            success: function(){},      // 用户确认分享后执行的回调函数
+            cancel: function(){}        // 用户取消分享后执行的回调函数
+        };
+
+        var _opts = $.extend(defaults, opts);
+
+        // 获取微信权限
+        $.ajax({
+            url: _opts['getWxConfigUrl'],
+            type: 'POST',
+            dataType: 'json',
+            data: {share_url: _opts['wxUrl']},
+        })
+        .done(function(res) {
+            if(typeof res == 'object'){
+                // 通过config接口注入权限验证配置
+                wx.config({
+                    // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: _opts['orDebug'],
+                    // 必填，公众号的唯一标识
+                    appId: res.appId,
+                    // 必填，生成签名的时间戳
+                    timestamp: res.timestamp,
+                    // 必填，生成签名的随机串
+                    nonceStr: res.nonceStr,
+                    // 必填，签名，见附录1
+                    signature: res.signature,
+                    // 必填，需要使用的JS接口列表
+                    jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ']
+                });
+                // 处理config验证成功或失败
+                _wxReady(res.url);
+            }else{
+                console.log('获取微信接口权限失败！');
+            }
+        })
+        .fail(function() {
+            console.log("获取微信接口权限失败！");
+        });
+
+        // 处理config验证成功或失败
+        var _wxReady = function(urls){
+            // wxConfig验证成功处理
+            wx.ready(function(){
+
+                // 分享到朋友圈
+                wx.onMenuShareTimeline({
+                    title: _opts['title'],
+                    link: _opts['link'],
+                    imgUrl: _opts['imgUrl'],
+                    success: _opts['success'],
+                    cancel: _opts['cancel']
+                });
+
+                // 分享给朋友
+                wx.onMenuShareAppMessage({
+                    title: _opts['title'],
+                    desc: _opts['desc'],
+                    link: _opts['link'],
+                    imgUrl: _opts['imgUrl'],
+                    // type: '', // 分享类型,music、video或link，不填默认为link
+                    // dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                    success: _opts['success'],
+                    cancel: _opts['cancel']
+                });
+
+                // 分享到QQ
+                wx.onMenuShareQQ({
+                    title: _opts['title'],
+                    desc: _opts['desc'],
+                    link: _opts['link'],
+                    imgUrl: _opts['imgUrl'],
+                    success: _opts['success'],
+                    cancel: _opts['cancel']
+                });
+            });
+
+            // wxConfig验证失败返回函数
+            wx.error(function(res){
+                console.log(res,'wxConfig验证失败')
+            });
+        };
+    };
+
+    window.wxShare = wxShare;
+
+})();
+```
+
 ### 2、授权
 
 [MIT License](license.txt)
