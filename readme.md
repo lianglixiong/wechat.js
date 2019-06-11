@@ -205,6 +205,7 @@ wechat('timeline', data, callback);
 ```
 调用：
 ```js
+//是否微信内置浏览器
 if(ua.match(/MicroMessenger/i) == 'micromessenger'){
     // 微信分享
     new wxShare({
