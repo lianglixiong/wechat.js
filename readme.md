@@ -204,7 +204,7 @@ wechat('timeline', data, callback);
 })();
 ```
 调用：
-```
+```js
 if(ua.match(/MicroMessenger/i) == 'micromessenger'){
     // 微信分享
     new wxShare({
