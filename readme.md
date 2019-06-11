@@ -104,7 +104,7 @@ wechat('timeline', data, callback);
 
 **四、封装**
 
-```
+```js
 (function(){
     var wxShare = function(opts){
         var defaults = {
